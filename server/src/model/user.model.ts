@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
   username: string;
@@ -8,6 +9,7 @@ export interface IUser extends Document {
   isPremium: boolean;
   createdAt: Date;
   updatedAt: Date;
+  isPasswordCorrect(password: string): Promise<boolean>;
 }
 
 const UserSchema: Schema = new mongoose.Schema<IUser>(
@@ -18,21 +20,23 @@ const UserSchema: Schema = new mongoose.Schema<IUser>(
       trim: true,
       unique: true,
       maxLength: [20, "Max Length of username is 20 character."],
-      minLength: [3, "Min Lengtg of username is 3 character."],
+      minLength: [3, "Min Length of username is 3 character."],
     },
     email: {
       type: String,
       required: true,
+      unique: true,
       validate: {
         validator: function (v) {
           return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
         },
-        message: (props) => `${props.value} is not a valid email.`,
+        message: (props: any) => `${props.value} is not a valid email.`,
       },
     },
     password: {
       type: String,
       required: true,
+      select: false,
     },
     isPremium: {
       type: Boolean,
@@ -46,5 +50,23 @@ const UserSchema: Schema = new mongoose.Schema<IUser>(
   },
   { timestamps: true }
 );
+
+UserSchema.pre<IUser>("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  try {
+    this.password = await bcrypt.hash(this.password, 8);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+UserSchema.methods.isPasswordCorrect = async function (
+  this: IUser,
+  password: string
+): Promise<boolean> {
+  return bcrypt.compare(password, this.password);
+};
 
 export const User = mongoose.model<IUser>("User", UserSchema);
