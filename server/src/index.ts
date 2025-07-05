@@ -1,15 +1,21 @@
-import express, { Application, Request, Response } from "express";
-import dotenv from "dotenv";
+import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import {
+  authRouter,
+  problemRouter,
+  profileRouter,
+  submissionRouter,
+} from "./route";
 
 dotenv.config();
 
-export const app: Application = express();
-
-app.use(express.json());
+export const app = express();
 
 app.use(cors());
+app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send(`Hello from worker ${process.pid}`);
-});
+app.use("/api/auth", authRouter);
+app.use("/api/problems", problemRouter);
+app.use("/api/submissions", submissionRouter);
+app.use("/api/profile", profileRouter);
