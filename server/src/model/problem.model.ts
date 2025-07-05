@@ -1,5 +1,95 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const ProblemSchema = new mongoose.Schema();
+export interface ITestCase {
+  input: string;
+  output: string;
+}
 
-export const Problem = mongoose.model("Problem", ProblemSchema);
+export interface IProblem extends Document {
+  title: string;
+  description: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  tags: string[];
+  testcase: ITestCase[];
+  hiddenTestcase: ITestCase[];
+  starterCode: mongoose.Types.ObjectId;
+  constraints: string;
+  author: mongoose.Types.ObjectId;
+  discussions: mongoose.Types.ObjectId;
+  likeCount: number;
+  dislikeCount: number;
+  hint: string[];
+  companies: string[];
+}
+
+const ProblemSchema = new Schema<IProblem>(
+  {
+    title: {
+      type: String,
+      required: [true, "Problem title is required"],
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+    },
+    difficulty: {
+      type: String,
+      enum: ["Easy", "Medium", "Hard"],
+      required: [true, "Difficulty level is required"],
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
+    testcase: [
+      {
+        input: { type: String, required: true },
+        output: { type: String, required: true },
+      },
+    ],
+    hiddenTestcase: [
+      {
+        input: { type: String, required: true },
+        output: { type: String, required: true },
+      },
+    ],
+    starterCode: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StarterCode",
+      required: true,
+    },
+    constraints: {
+      type: String,
+      default: "",
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    discussions: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Discussion",
+    },
+    likeCount: {
+      type: Number,
+      default: 0,
+    },
+    dislikeCount: {
+      type: Number,
+      default: 0,
+    },
+    hint: {
+      type: [String],
+      default: [],
+    },
+    companies: {
+      type: [String],
+      default: [],
+    },
+  },
+  { timestamps: true }
+);
+
+export const Problem = mongoose.model<IProblem>("Problem", ProblemSchema);
