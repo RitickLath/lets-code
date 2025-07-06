@@ -1,6 +1,7 @@
 import cluster from "cluster";
 import os from "os";
 import { app } from ".";
+import { databaseConnect } from "./config/database";
 
 const PORT: number = Number(process.env.PORT) || 3000;
 
@@ -21,7 +22,8 @@ if (cluster.isPrimary) {
     cluster.fork();
   });
 } else {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
+    await databaseConnect();
     console.log(`Worker ${process.pid} started on port ${PORT}`);
   });
 }

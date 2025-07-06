@@ -8,6 +8,8 @@ export {
   createProblem,
   updateProblem,
   deleteProblem,
+  getDiscussionByProblemId,
+  addCommentToDiscussion,
 } from "./problem.controller";
 
 export {
