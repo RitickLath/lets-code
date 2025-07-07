@@ -4,7 +4,7 @@ import FeedbackCard from "./FeedbackCard";
 const Testimonial = () => {
   return (
     <div className="flex flex-col w-full items-center py-12 px-4">
-      <h1 className="text-2xl lg:text-3xl max-w-[600px] text-center pb-8 text-white md:text-5xl font-semibold">
+      <h1 className="text-3xl md:text-4xl font-bold text-white text-center max-w-3xl pb-6">
         We are building Let's Code with feedback from the best devs in the
         world.
       </h1>
