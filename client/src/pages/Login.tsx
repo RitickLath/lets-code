@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,16 +7,41 @@ const Login = () => {
     identifier: "", // username or email
     password: "",
   });
-  const naviagte = useNavigate();
+  const [isError, setIsError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // API CALL
-    console.log("Logging in with", formData);
+    setIsError(null);
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/login",
+        formData
+      );
+
+      if (response.data.success) {
+        // Optional: store token or user info
+        // localStorage.setItem("token", response.data.token);
+        navigate("/dashboard");
+      } else {
+        setIsError(response.data.error || "Login failed");
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setIsError(error.response?.data?.error || "Login failed");
+      } else {
+        setIsError("Something went wrong");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,7 +63,12 @@ const Login = () => {
           Login to Your Account
         </h2>
 
-        {/* Identifier (Username or Email) */}
+        {/* Error Message */}
+        {isError && (
+          <p className="text-red-500 text-sm text-center mb-4">{isError}</p>
+        )}
+
+        {/* Identifier Input */}
         <div className="mb-4">
           <label className="block text-sm text-[#92959c] mb-1">
             Username or Email
@@ -52,7 +83,7 @@ const Login = () => {
           />
         </div>
 
-        {/* Password */}
+        {/* Password Input */}
         <div className="mb-6">
           <label className="block text-sm text-[#92959c] mb-1">Password</label>
           <input
@@ -65,19 +96,20 @@ const Login = () => {
           />
         </div>
 
-        {/* Login Button */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-[#6166b9] hover:bg-[#3c4069] py-2 rounded font-medium transition-colors"
+          disabled={isLoading}
+          className="w-full bg-[#6166b9] hover:bg-[#3c4069] py-2 rounded font-medium transition-colors disabled:opacity-50"
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
 
-        {/*  Add Register Link */}
+        {/* Register Redirect */}
         <p className="text-center text-sm text-[#92959c] mt-4">
           Don't have an account?{" "}
           <span
-            onClick={() => naviagte("/register")}
+            onClick={() => navigate("/register")}
             className="text-[#6166b9] cursor-pointer hover:underline"
           >
             Register

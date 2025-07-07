@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,22 +10,48 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const [isError, setIsError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsError(null);
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      setIsError("Passwords do not match");
       return;
     }
 
-    // API CALL
-    console.log("Registering with", formData);
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/register",
+        {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      if (response.data.success) {
+        navigate("/dashboard");
+      } else {
+        setIsError(response.data.error || "Registration failed");
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setIsError(error.response?.data?.error || "Something went wrong");
+      } else {
+        setIsError("Unexpected error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +72,11 @@ const Register = () => {
         <h2 className="text-2xl font-semibold mb-6 text-center">
           Create Account
         </h2>
+
+        {/* Error Message */}
+        {isError && (
+          <div className="text-red-400 text-sm mb-4 text-center">{isError}</div>
+        )}
 
         {/* Username */}
         <div className="mb-4">
@@ -103,12 +135,13 @@ const Register = () => {
         {/* Register Button */}
         <button
           type="submit"
-          className="w-full bg-[#6166b9] hover:bg-[#3c4069] py-2 rounded font-medium transition-colors"
+          disabled={isLoading}
+          className="w-full bg-[#6166b9] hover:bg-[#3c4069] py-2 rounded font-medium transition-colors disabled:opacity-50"
         >
-          Register
+          {isLoading ? "Registering..." : "Register"}
         </button>
 
-        {/* Login link */}
+        {/* Login Redirect */}
         <p className="text-center text-sm text-[#92959c] mt-4">
           Already have an account?{" "}
           <span
