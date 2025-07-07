@@ -156,6 +156,57 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getMe = (req: Request, res: Response) => {
-  res.send("Get current user");
+export const getMe = async (req: Request, res: Response) => {
+  const token = req.cookies.token;
+  console.log(token);
+
+  if (!token) {
+    console.log("No Token");
+    res
+      .status(401)
+      .json({ success: false, message: null, error: "Unauthorized" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string;
+      role: string;
+    };
+
+    if (!decoded) {
+      console.log("Not Decoded");
+      res.status(403).json({
+        success: false,
+        data: null,
+        error: "Access denied",
+      });
+      return;
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      console.log("No USer");
+      res.status(404).json({
+        success: false,
+        data: null,
+        error: "User no longer exists",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        isPremium: user.isPremium,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ success: false, error: "Invalid or expired token" });
+  }
 };
