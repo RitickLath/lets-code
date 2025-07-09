@@ -1,5 +1,6 @@
+import { AuthContext } from "@/context/auth-context";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -10,6 +11,7 @@ const Login = () => {
   const [isError, setIsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,8 +29,7 @@ const Login = () => {
       );
 
       if (response.data.success) {
-        // Optional: store token or user info
-        // localStorage.setItem("token", response.data.token);
+        setIsAuthenticated(true);
         navigate("/dashboard");
       } else {
         setIsError(response.data.error || "Login failed");
@@ -36,8 +37,10 @@ const Login = () => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setIsError(error.response?.data?.error || "Login failed");
+        setIsAuthenticated(false);
       } else {
         setIsError("Something went wrong");
+        setIsAuthenticated(false);
       }
     } finally {
       setIsLoading(false);

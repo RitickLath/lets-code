@@ -10,6 +10,9 @@ import Submissions from "./pages/Submissions";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthProvider";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import NonProtectedRoute from "./components/NonProtectedRoute";
 
 const App = () => {
   return (
@@ -19,13 +22,25 @@ const App = () => {
           <Navbar />
           <div className="py-4 px-6 sm:px-8 md:px-10 lg:px-12 bg-[#252525] min-h-[90dvh] text-white">
             <Routes>
+              {/* All can access */}
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/problems" element={<Problems />} />
               <Route path="/problems/:id" element={<ProblemDetail />} />
-              <Route path="/submissions" element={<Submissions />} />
-              <Route path="/profile" element={<Profile />} />
+
+              {/* Only Non Logged In user */}
+              <Route element={<NonProtectedRoute />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              </Route>
+
+              {/* Only logged in user */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/submissions" element={<Submissions />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+
+              {/* Error/Invalid Routes */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

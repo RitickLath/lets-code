@@ -6,9 +6,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate("/");
+  };
 
   return (
     <div className="px-6 sm:px-8 md:px-10 lg:px-12 bg-[#252525] border-b-2 border-[#2b2b2b] text-white">
@@ -17,19 +25,53 @@ const Navbar = () => {
         <h1 className="font-bold text-xl text-[#ae6162]">Let's Code</h1>
         <div className="flex space-x-8">
           <button className="cursor-pointer">About</button>
-          <button className="cursor-pointer">Problems</button>
-        </div>
-        <div className="flex space-x-8">
-          <button className="cursor-pointer" onClick={() => navigate("/login")}>
-            Login
+          <button
+            onClick={() => navigate("/problems")}
+            className="cursor-pointer"
+          >
+            Problems
           </button>
+          {isAuthenticated && (
+            <button
+              onClick={() => navigate("/submissions")}
+              className="cursor-pointer"
+            >
+              Submissions
+            </button>
+          )}
+          {isAuthenticated && (
+            <button
+              onClick={() => navigate("/profile")}
+              className="cursor-pointer"
+            >
+              Profile
+            </button>
+          )}
+        </div>
+
+        {isAuthenticated ? (
           <button
             className="cursor-pointer text-left px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
-            onClick={() => navigate("/register")}
+            onClick={handleLogout}
           >
-            Sign Up
+            Logout
           </button>
-        </div>
+        ) : (
+          <div className="flex space-x-8">
+            <button
+              className="cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+            <button
+              className="cursor-pointer text-left px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
+              onClick={() => navigate("/register")}
+            >
+              Sign Up
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Small Screen */}
@@ -59,21 +101,49 @@ const Navbar = () => {
 
                 <div className="pl-2 flex flex-col space-y-4 py-6">
                   <button className="cursor-pointer text-left">About</button>
-                  <button className="cursor-pointer text-left">Problem</button>
-                  <div className="flex space-x-4 justify-center">
-                    <button
-                      onClick={() => navigate("/login")}
-                      className="cursor-pointer text-left"
-                    >
-                      Login
+                  <button
+                    onClick={() => navigate("/problems")}
+                    className="cursor-pointer text-left"
+                  >
+                    Problem
+                  </button>
+                  {isAuthenticated && (
+                    <button className="text-left cursor-pointer">
+                      Submissions
                     </button>
+                  )}
+                  {isAuthenticated && (
                     <button
-                      className="cursor-pointer text-left px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
-                      onClick={() => navigate("/register")}
+                      onClick={() => navigate("/profile")}
+                      className="text-left cursor-pointer"
                     >
-                      Sign Up
+                      Profile
                     </button>
-                  </div>
+                  )}
+
+                  {isAuthenticated ? (
+                    <button
+                      onClick={handleLogout}
+                      className="cursor-pointer text-center px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <div className="flex space-x-4 justify-center">
+                      <button
+                        onClick={() => navigate("/login")}
+                        className="cursor-pointer text-left"
+                      >
+                        Login
+                      </button>
+                      <button
+                        className="cursor-pointer text-left px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
+                        onClick={() => navigate("/register")}
+                      >
+                        Sign Up
+                      </button>
+                    </div>
+                  )}
                 </div>
               </SheetHeader>
             </SheetContent>
@@ -85,11 +155,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-// about
-// Login
-// logout
-// sign up
-// problems
-// dashboard
-// profile

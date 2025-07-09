@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "@/context/auth-context";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const Register = () => {
   const [isError, setIsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,15 +41,19 @@ const Register = () => {
       );
 
       if (response.data.success) {
+        setIsAuthenticated(true);
         navigate("/dashboard");
       } else {
         setIsError(response.data.error || "Registration failed");
+        setIsAuthenticated(false);
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setIsError(error.response?.data?.error || "Something went wrong");
+        setIsAuthenticated(false);
       } else {
         setIsError("Unexpected error occurred");
+        setIsAuthenticated(false);
       }
     } finally {
       setIsLoading(false);
