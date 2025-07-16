@@ -1,7 +1,10 @@
 import { techIcons } from "@/constants/techIcons";
 import FloatingIcon from "./FloatingIcon";
+import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <div
       className="relative flex w-full justify-center items-center text-center h-[80dvh]"
@@ -40,7 +43,10 @@ const Landing = () => {
           <button className="cursor-pointer px-4 py-1 rounded-full bg-[#2b2b2b] outline-1">
             Get Started
           </button>
-          <button className="cursor-pointer px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]">
+          <button
+            onClick={() => navigate("/problems")}
+            className="cursor-pointer px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
+          >
             See Problems
           </button>
         </div>

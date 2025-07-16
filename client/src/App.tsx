@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Problems from "./pages/Problems";
 import ProblemDetail from "./pages/ProblemDetail";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -13,6 +12,9 @@ import { AuthProvider } from "./context/AuthProvider";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NonProtectedRoute from "./components/NonProtectedRoute";
+import { lazy, Suspense } from "react";
+
+const Problems = lazy(() => import("./pages/Problems"));
 
 const App = () => {
   return (
@@ -24,7 +26,14 @@ const App = () => {
             <Routes>
               {/* All can access */}
               <Route path="/" element={<Home />} />
-              <Route path="/problems" element={<Problems />} />
+              <Route
+                path="/problems"
+                element={
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Problems />
+                  </Suspense>
+                }
+              />
               <Route path="/problems/:id" element={<ProblemDetail />} />
 
               {/* Only Non Logged In user */}
