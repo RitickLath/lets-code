@@ -1,27 +1,22 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IStarterCode extends Document {
-  problemId: mongoose.Types.ObjectId;
-  language: "Java" | "Javascript" | "Python";
-  starter: string;
+  javaStarter: string;
+  javaScriptStarter: string;
+  pythonStarter: string;
 }
 
 const StarterCodeSchema = new Schema<IStarterCode>(
   {
-    problemId: {
-      type: mongoose.Schema.Types.ObjectId,
+    javaStarter: {
+      type: String,
       required: true,
-      ref: "Problem",
     },
-    language: {
+    javaScriptStarter: {
       type: String,
-      enum: ["Java", "Javascript", "Python"],
-      required: [true, "Language is required"],
+      required: true,
     },
-    starter: {
-      type: String,
-      required: [true, "Starter code is required"],
-    },
+    pythonStarter: { type: String, required: true },
   },
   { timestamps: true }
 );

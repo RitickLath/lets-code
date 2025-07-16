@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../model";
+import mongoose from "mongoose";
 
 interface CustomRequest extends Request {
   id?: string;
@@ -88,6 +89,19 @@ export const adminAuth = async (
         success: false,
         data: null,
         error: "Access denied: Admin role required",
+      });
+      return;
+    }
+
+    const isValidMongooseId = mongoose.Types.ObjectId.isValid(
+      decoded.id as string
+    );
+
+    if (!isValidMongooseId) {
+      res.status(403).json({
+        success: false,
+        data: null,
+        error: "Access denied: Id is not a valid mongoose id.",
       });
       return;
     }

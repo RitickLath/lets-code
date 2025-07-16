@@ -35,21 +35,25 @@ const testCaseSchema = z.object({
 });
 
 // Main Problem Zod Schema
-export const problemSchema = z.object({
-  title: z.string().trim().min(1, "Problem title is required"),
-  description: z.string().min(1, "Description is required"),
-  difficulty: z.enum(["Easy", "Medium", "Hard"], {
-    required_error: "Difficulty level is required",
-  }),
-  tags: z.array(z.string()).optional(),
-  testcase: z.array(testCaseSchema).min(1, "At least one testcase is required"),
-  hiddenTestcase: z.array(testCaseSchema).optional(),
-  starterCode: objectIdSchema,
-  constraints: z.string().optional(),
-  author: objectIdSchema,
-  discussions: objectIdSchema.optional(),
-  likeCount: z.number().int().nonnegative().optional(),
-  dislikeCount: z.number().int().nonnegative().optional(),
-  hint: z.array(z.string()).optional(),
-  companies: z.array(z.string()).optional(),
-});
+export const problemSchema = z
+  .object({
+    title: z.string().trim().min(1, "Problem title is required"),
+    description: z.string().min(1, "Description is required"),
+    difficulty: z.enum(["Easy", "Medium", "Hard"], {
+      required_error: "Difficulty level is required",
+    }),
+    tags: z.array(z.string()).optional(),
+    testcase: z
+      .array(testCaseSchema)
+      .min(1, "At least one testcase is required"),
+    hiddenTestcase: z.array(testCaseSchema).optional(),
+    starterCode: objectIdSchema.optional(),
+    constraints: z.string().optional(),
+    discussions: objectIdSchema.optional(),
+    likeCount: z.number().int().nonnegative().optional(),
+    dislikeCount: z.number().int().nonnegative().optional(),
+    hint: z.array(z.string()).optional(),
+    companies: z.array(z.string()).optional(),
+  })
+  .strict();
+  

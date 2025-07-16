@@ -12,10 +12,10 @@ export interface IProblem extends Document {
   tags: string[];
   testcase: ITestCase[];
   hiddenTestcase: ITestCase[];
-  starterCode: mongoose.Types.ObjectId;
-  constraints: string;
+  starterCode?: mongoose.Types.ObjectId;
+  constraints?: string;
   author: mongoose.Types.ObjectId;
-  discussions: mongoose.Types.ObjectId;
+  discussions?: mongoose.Types.ObjectId;
   likeCount: number;
   dislikeCount: number;
   hint: string[];
@@ -28,9 +28,11 @@ const ProblemSchema = new Schema<IProblem>(
       type: String,
       required: [true, "Problem title is required"],
       trim: true,
+      unique: true,
     },
     description: {
       type: String,
+      unique: true,
       required: [true, "Description is required"],
     },
     difficulty: {
@@ -57,7 +59,7 @@ const ProblemSchema = new Schema<IProblem>(
     starterCode: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "StarterCode",
-      required: true,
+      // required: true,
     },
     constraints: {
       type: String,

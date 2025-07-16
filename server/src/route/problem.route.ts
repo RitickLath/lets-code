@@ -9,6 +9,7 @@ import {
   getDiscussionByProblemId,
 } from "../controller";
 import { adminAuth, userAuth } from "../middleware";
+import { CreateStarterCode } from "../controller/problem.controller";
 
 export const problemRouter = Router();
 
@@ -23,6 +24,8 @@ problemRouter.post("/comment/:id", userAuth, addCommentToDiscussion);
 problemRouter.get("/discussion/:id", userAuth, getDiscussionByProblemId);
 
 // Admin-only Routes
+
+problemRouter.post("/starter", adminAuth, CreateStarterCode);
 problemRouter.post("/", adminAuth, createProblem);
 problemRouter.put("/", adminAuth, updateProblem);
 problemRouter.delete("/", adminAuth, deleteProblem);

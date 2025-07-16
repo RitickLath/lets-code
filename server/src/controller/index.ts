@@ -1,5 +1,3 @@
-import { getAllProblems } from "./problem.controller";
-
 export { registerUser, loginUser, getMe } from "./auth.controller";
 
 export {
