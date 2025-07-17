@@ -347,7 +347,7 @@ export const searchProblem = async (req: Request, res: Response) => {
     // Step-3: Perform case-insensitive search using regex on 'title'
     const questionsMatching = await Problem.find({
       title: { $regex: keyword, $options: "i" },
-    }).select("title difficulty tags");
+    }).select("title difficulty tags companies");
 
     // Step-4: Handle no matches found
     if (!questionsMatching || questionsMatching.length === 0) {
@@ -408,7 +408,7 @@ export const difficultyProblem = async (req: Request, res: Response) => {
     // Step-5: case-insensitive search for matching difficulty
     const problems = await Problem.find({
       difficulty: { $regex: `^${normalizedDifficulty}$`, $options: "i" },
-    }).select("title difficulty tags");
+    }).select("title difficulty tags companies");
 
     // Step-6: Return matching problems / Even if Empty
     res.status(200).json({
@@ -433,23 +433,14 @@ export const difficultyProblem = async (req: Request, res: Response) => {
 
 export const tagsProblem = async (req: Request, res: Response) => {
   // Step-1: Extract 'tags' from request body
-  const { tags } = req.body;
+  const { tag } = req.query;
 
   // Step-2: Validate that 'tags' is a non-empty array of strings
-  if (!tags || !Array.isArray(tags)) {
+  if (!tag || typeof tag !== "string") {
     res.status(400).json({
       success: false,
-      message: "Invalid input. 'tags' must be an array of strings.",
-      error: "Invalid tags input.",
-    });
-    return;
-  }
-
-  if (tags.length === 0 || typeof tags[0] !== "string") {
-    res.status(400).json({
-      success: false,
-      message: "Tags array must contain at least one string.",
-      error: "Empty or invalid tag format.",
+      message: "Invalid input. 'tag' must be a non-empty string.",
+      error: "Invalid 'tag' parameter.",
     });
     return;
   }
@@ -457,25 +448,18 @@ export const tagsProblem = async (req: Request, res: Response) => {
   try {
     // Step-3: Search for problems where any of the provided tags matches (case-insensitive)
     const questions = await Problem.find({
-      tags: { $in: tags.map((tag) => new RegExp(tag, "i")) },
-    }).select("title difficulty tags");
+      tags: { $in: [new RegExp(tag, "i")] },
+    }).select("title difficulty tags companies");
 
-    // Step-4: Handle no matches found
-    if (!questions || questions.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "No problems found for the given tags.",
-        error: "No matching problems.",
-      });
-      return;
-    }
-
-    // Step-5: Return matched problems
+    // Step-4: Return matched problems
     res.status(200).json({
       success: true,
-      message: "Problems retrieved successfully by tags.",
       data: questions,
       error: null,
+      message:
+        questions.length === 0
+          ? "No matching problems found."
+          : "Problems retrieved successfully by tags.",
     });
   } catch (error) {
     // Step-6: Handle server errors
