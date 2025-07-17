@@ -14,7 +14,7 @@ export const getAllProblems = async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 0;
 
     // Step-2: Define the number of results per page
-    const limit = 15;
+    const limit = 10;
 
     // Step-3: Calculate how many documents to skip based on page
     const skip = page * limit;
@@ -23,7 +23,7 @@ export const getAllProblems = async (req: Request, res: Response) => {
     const problems = await Problem.find()
       .limit(limit)
       .skip(skip)
-      .select("title difficulty tags"); // return only necessary fields
+      .select("title difficulty tags companies"); // return only necessary fields
 
     // Step-5: Respond with success and the list of problems
     res.status(200).json({
@@ -325,6 +325,172 @@ export const CreateStarterCode = async (req: Request, res: Response) => {
       success: false,
       data: null,
       error: "Internal server error",
+    });
+  }
+};
+
+export const searchProblem = async (req: Request, res: Response) => {
+  // Step-1: Extract 'keyword' from query parameters
+  const { keyword } = req.query;
+
+  // Step-2: Validate that 'keyword' exists and is a string
+  if (!keyword || typeof keyword !== "string") {
+    res.status(400).json({
+      success: false,
+      message: "Please enter a valid keyword to search.",
+      error: "Missing or invalid 'keyword' query parameter.",
+    });
+    return;
+  }
+
+  try {
+    // Step-3: Perform case-insensitive search using regex on 'title'
+    const questionsMatching = await Problem.find({
+      title: { $regex: keyword, $options: "i" },
+    }).select("title difficulty tags");
+
+    // Step-4: Handle no matches found
+    if (!questionsMatching || questionsMatching.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No matching problems found.",
+        error: "No matching problems found.",
+      });
+      return;
+    }
+
+    // Step-5: Return matched problems
+    res.status(200).json({
+      success: true,
+      message: "Matching problems retrieved successfully.",
+      data: questionsMatching,
+      error: null,
+    });
+  } catch (error) {
+    // Step-6: Handle server errors
+    console.error("Error searching problems:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: "Internal server error." + error,
+    });
+  }
+};
+
+export const difficultyProblem = async (req: Request, res: Response) => {
+  // Step-1: Extract 'difficulty' from query parameters
+  const { difficulty } = req.query;
+
+  // Step-2: Validate that 'difficulty' exists and is a string
+  if (!difficulty || typeof difficulty !== "string") {
+    res.status(400).json({
+      success: false,
+      message: "Please enter a difficulty level to search for.",
+      error: "Missing or invalid difficulty level.",
+    });
+    return;
+  }
+
+  // Step-3: Normalize difficulty to lowercase
+  const normalizedDifficulty = difficulty.toLowerCase();
+
+  // Step-4: Check if difficulty is one of the accepted values
+  if (!["easy", "medium", "hard"].includes(normalizedDifficulty)) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid difficulty type. Must be 'Easy', 'Medium', or 'Hard'.",
+      error: "Invalid difficulty level.",
+    });
+    return;
+  }
+
+  try {
+    // Step-5: case-insensitive search for matching difficulty
+    const problems = await Problem.find({
+      difficulty: { $regex: `^${normalizedDifficulty}$`, $options: "i" },
+    }).select("title difficulty tags");
+
+    // Step-6: Handle no problems found
+    if (!problems || problems.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No problems found for the given difficulty.",
+        error: "No matching problems.",
+      });
+      return;
+    }
+
+    // Step-7: Return matching problems
+    res.status(200).json({
+      success: true,
+      message: "Problems retrieved successfully.",
+      data: problems,
+      error: null,
+    });
+  } catch (error) {
+    // Step-8: Handle unexpected server errors
+    console.error("Error fetching problems by difficulty:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: "Internal server error" + error,
+    });
+  }
+};
+
+export const tagsProblem = async (req: Request, res: Response) => {
+  // Step-1: Extract 'tags' from request body
+  const { tags } = req.body;
+
+  // Step-2: Validate that 'tags' is a non-empty array of strings
+  if (!tags || !Array.isArray(tags)) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid input. 'tags' must be an array of strings.",
+      error: "Invalid tags input.",
+    });
+    return;
+  }
+
+  if (tags.length === 0 || typeof tags[0] !== "string") {
+    res.status(400).json({
+      success: false,
+      message: "Tags array must contain at least one string.",
+      error: "Empty or invalid tag format.",
+    });
+    return;
+  }
+
+  try {
+    // Step-3: Search for problems where any of the provided tags matches (case-insensitive)
+    const questions = await Problem.find({
+      tags: { $in: tags.map((tag) => new RegExp(tag, "i")) },
+    }).select("title difficulty tags");
+
+    // Step-4: Handle no matches found
+    if (!questions || questions.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No problems found for the given tags.",
+        error: "No matching problems.",
+      });
+      return;
+    }
+
+    // Step-5: Return matched problems
+    res.status(200).json({
+      success: true,
+      message: "Problems retrieved successfully by tags.",
+      data: questions,
+      error: null,
+    });
+  } catch (error) {
+    // Step-6: Handle server errors
+    console.error("Error fetching problems by tags:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: "Internal server error" + error,
     });
   }
 };

@@ -8,6 +8,9 @@ export {
   deleteProblem,
   getDiscussionByProblemId,
   addCommentToDiscussion,
+  difficultyProblem,
+  tagsProblem,
+  searchProblem,
 } from "./problem.controller";
 
 export {

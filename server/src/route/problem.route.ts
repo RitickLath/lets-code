@@ -9,13 +9,23 @@ import {
   getDiscussionByProblemId,
 } from "../controller";
 import { adminAuth, userAuth } from "../middleware";
-import { CreateStarterCode } from "../controller/problem.controller";
+import {
+  CreateStarterCode,
+  difficultyProblem,
+  searchProblem,
+  tagsProblem,
+} from "../controller/problem.controller";
 
 export const problemRouter = Router();
 
 // Public Problem Routes
 problemRouter.get("/", getAllProblems);
 problemRouter.get("/:id", getProblemById);
+
+// Public Problem Routes (Filter based routes)
+problemRouter.get("/search", searchProblem);
+problemRouter.get("/difficulty", difficultyProblem);
+problemRouter.get("/tags", tagsProblem);
 
 // Comment on Discussion
 problemRouter.post("/comment/:id", userAuth, addCommentToDiscussion);
