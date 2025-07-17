@@ -410,25 +410,18 @@ export const difficultyProblem = async (req: Request, res: Response) => {
       difficulty: { $regex: `^${normalizedDifficulty}$`, $options: "i" },
     }).select("title difficulty tags");
 
-    // Step-6: Handle no problems found
-    if (!problems || problems.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "No problems found for the given difficulty.",
-        error: "No matching problems.",
-      });
-      return;
-    }
-
-    // Step-7: Return matching problems
+    // Step-6: Return matching problems / Even if Empty
     res.status(200).json({
       success: true,
-      message: "Problems retrieved successfully.",
       data: problems,
       error: null,
+      message:
+        problems.length === 0
+          ? "No matching problems found."
+          : "Problems retrieved successfully.",
     });
   } catch (error) {
-    // Step-8: Handle unexpected server errors
+    // Step-7: Handle unexpected server errors
     console.error("Error fetching problems by difficulty:", error);
     res.status(500).json({
       success: false,

@@ -20,7 +20,7 @@ export const problemRouter = Router();
 
 // Public Problem Routes
 problemRouter.get("/", getAllProblems);
-problemRouter.get("/:id", getProblemById);
+problemRouter.get("/id/:id", getProblemById);
 
 // Public Problem Routes (Filter based routes)
 problemRouter.get("/search", searchProblem);
