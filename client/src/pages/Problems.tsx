@@ -2,11 +2,13 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import ShowTopic from "@/components/ShowTopic";
-import SearchQuestion from "@/components/SearchQuestion";
 import ListQuestions from "@/components/ListQuestions";
+import SearchQuestion from "@/components/SearchQuestion";
 
 const Problems = () => {
   const [page, setPage] = useState<number>(0);
+  const [questionData, setQuestionData] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const fetchProblem = async (page: number) => {
     try {
@@ -40,13 +42,19 @@ const Problems = () => {
   return (
     <div className="w-full">
       {/* Topic tags Button */}
-      <ShowTopic />
+      <ShowTopic
+        setIsFiltered={setIsFiltered}
+        setQuestionData={setQuestionData}
+      />
 
       {/* Search bar */}
-      <SearchQuestion />
+      <SearchQuestion
+        setIsFiltered={setIsFiltered}
+        setQuestionData={setQuestionData}
+      />
 
       {/* Show all questions */}
-      <ListQuestions questionData={data} />
+      <ListQuestions questionData={!isFiltered ? data : questionData} />
 
       {/* Next/Previous Button */}
       <div className="flex justify-end space-x-3 mt-6">

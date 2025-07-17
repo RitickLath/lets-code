@@ -49,7 +49,7 @@ const ListQuestions = ({ questionData }: { questionData: Question[] }) => {
 
           {/* Tags */}
           <span className="hidden md:flex flex-wrap gap-2">
-            {element.tags.length > 0 ? (
+            {element.tags && element.tags.length > 0 ? (
               element.tags.slice(0, 2).map((tag, i) => (
                 <span
                   key={i}

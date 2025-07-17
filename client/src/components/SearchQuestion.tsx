@@ -1,6 +1,41 @@
+import axios from "axios";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { FaSearch } from "react-icons/fa";
 
-const SearchQuestion = () => {
+const SearchQuestion = ({
+  setQuestionData,
+  setIsFiltered,
+}: {
+  setQuestionData: Dispatch<SetStateAction<never[]>>;
+  setIsFiltered: Dispatch<SetStateAction<boolean>>;
+}) => {
+  const [keyword, setKeyword] = useState<string>("");
+
+  useEffect(() => {
+    if (keyword.trim().length < 2) {
+      setIsFiltered(false);
+      return;
+    }
+
+    const timerId = setTimeout(async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/problems/search?keyword=${keyword}`
+        );
+        if (!response.data.success) {
+          console.log("Error Occured" + response.data.error);
+        }
+        setIsFiltered(true);
+        setQuestionData(response.data.data);
+      } catch (error: unknown) {
+        console.log(error);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword]);
+
   return (
     <div className="mt-2 lg:mt-6 relative w-full max-w-md">
       {/* Search Icon */}
@@ -10,6 +45,8 @@ const SearchQuestion = () => {
 
       {/* Search Input */}
       <input
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         className="w-full bg-[#2e2e2e] outline-none pl-10 pr-4 py-2 rounded-3xl text-sm text-white placeholder:text-gray-400"
         placeholder="Search Questions"
       />
