@@ -1,10 +1,14 @@
+import { useNavigate } from "react-router-dom";
+
 type Question = {
+  _id: string;
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
   tags: string[];
   companies: string[];
 };
 const ListQuestions = ({ questionData }: { questionData: Question[] }) => {
+  const navigate = useNavigate();
   return (
     <div className="w-full overflow-x-auto">
       {/* Table Header */}
@@ -24,7 +28,10 @@ const ListQuestions = ({ questionData }: { questionData: Question[] }) => {
           } text-gray-200 text-sm`}
         >
           {/* Title */}
-          <span className="hover:text-blue-400 cursor-pointer flex items-center">
+          <span
+            onClick={() => navigate(`/problems/${element._id}`)}
+            className="hover:text-blue-400 cursor-pointer flex items-center"
+          >
             <span className="mr-3">{index + 1}.</span>
             <span className="sm:hidden">
               {element.title.length > 20

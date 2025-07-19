@@ -3,6 +3,8 @@ import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { LuArrowDownUp } from "react-icons/lu";
 
+const levels: Array<"Easy" | "Medium" | "Hard"> = ["Easy", "Medium", "Hard"];
+
 const DifficultyFilter = ({
   setQuestionData,
   setIsFiltered,
@@ -51,7 +53,7 @@ const DifficultyFilter = ({
 
       {isDropdownOpen && (
         <div className="absolute top-9 -right-26 border-[#252525] border-2 bg-[#2e2e2e]  pl-4 pr-14 py-2 rounded-md shadow-lg z-10">
-          {["Easy", "Medium", "Hard"].map((level) => (
+          {levels.map((level) => (
             <h1
               key={level}
               onClick={() => handleDifficultySelect(level)}
