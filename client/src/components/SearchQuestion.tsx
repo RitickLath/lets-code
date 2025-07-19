@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { FaSearch } from "react-icons/fa";
+import DifficultyFilter from "./DifficultyFilter";
 
 const SearchQuestion = ({
   setQuestionData,
@@ -37,7 +38,7 @@ const SearchQuestion = ({
   }, [keyword]);
 
   return (
-    <div className="mt-2 lg:mt-6 relative w-full max-w-md">
+    <div className="mt-2 lg:mt-6 flex items-center space-x-8 relative w-full max-w-md">
       {/* Search Icon */}
       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
         <FaSearch />
@@ -49,6 +50,11 @@ const SearchQuestion = ({
         onChange={(e) => setKeyword(e.target.value)}
         className="w-full bg-[#2e2e2e] outline-none pl-10 pr-4 py-2 rounded-3xl text-sm text-white placeholder:text-gray-400"
         placeholder="Search Questions"
+      />
+
+      <DifficultyFilter
+        setQuestionData={setQuestionData}
+        setIsFiltered={setIsFiltered}
       />
     </div>
   );

@@ -22,7 +22,12 @@ const Navbar = () => {
     <div className="px-6 sm:px-8 md:px-10 lg:px-12 bg-[#252525] border-b-2 border-[#2b2b2b] text-white">
       {/* Large Screen */}
       <div className="hidden lg:flex justify-between items-center py-3">
-        <h1 className="font-bold text-xl text-[#ae6162]">Let's Code</h1>
+        <h1
+          onClick={() => navigate("/")}
+          className="cursor-pointer font-bold text-xl text-[#ae6162]"
+        >
+          Let's Code
+        </h1>
         <div className="flex space-x-8">
           <button className="cursor-pointer">About</button>
           <button
