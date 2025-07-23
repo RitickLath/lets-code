@@ -36,6 +36,6 @@ problemRouter.get("/discussion/:id", userAuth, getDiscussionByProblemId);
 // Admin-only Routes
 
 problemRouter.post("/starter", adminAuth, CreateStarterCode);
-problemRouter.post("/", adminAuth, createProblem);
+problemRouter.post("/", createProblem); // will add adminauth
 problemRouter.put("/", adminAuth, updateProblem);
 problemRouter.delete("/", adminAuth, deleteProblem);

@@ -68,10 +68,10 @@ export const getProblemById = async (req: Request, res: Response) => {
 
   try {
     // Step-4: Fetch the problem by ID
-    //  Exclude hiddenTestcase and discussions
+    //  Exclude and discussions
     //  Populate the 'author' field but only return the username
     const problem = await Problem.findById(problemid)
-      .select("-hiddenTestcase -discussions")
+      .select(" -discussions")
       .populate({ path: "author", select: "username" });
 
     // Step-5: Return 404 if no matching problem is found
@@ -165,7 +165,10 @@ export const createProblem = async (req: Request, res: Response) => {
     }
 
     // Step-3: Add the authenticated admin's ID as the author of the problem
-    const sanitizedData = { ...parsed.data, author: (req as CustomRequest).id };
+    const sanitizedData = {
+      ...parsed.data,
+      author: (req as CustomRequest).id || `6876674c1483f2d4377f5f98`,
+    };
 
     // Step-4: Normalize title and description to perform case-insensitive duplicate check
     const { title, description } = sanitizedData;

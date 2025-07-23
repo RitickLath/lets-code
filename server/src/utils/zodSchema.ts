@@ -43,12 +43,7 @@ export const problemSchema = z
       required_error: "Difficulty level is required",
     }),
     tags: z.array(z.string()).optional(),
-    testcase: z
-      .array(testCaseSchema)
-      .min(1, "At least one testcase is required"),
-    hiddenTestcase: z.array(testCaseSchema).optional(),
-    starterCode: objectIdSchema.optional(),
-    constraints: z.string().optional(),
+
     discussions: objectIdSchema.optional(),
     likeCount: z.number().int().nonnegative().optional(),
     dislikeCount: z.number().int().nonnegative().optional(),
@@ -56,4 +51,3 @@ export const problemSchema = z
     companies: z.array(z.string()).optional(),
   })
   .strict();
-  

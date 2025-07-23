@@ -7,13 +7,9 @@ export interface ITestCase {
 
 export interface IProblem extends Document {
   title: string;
-  description: string;
+  description: string; // file name in frontend
   difficulty: "Easy" | "Medium" | "Hard";
   tags: string[];
-  testcase: ITestCase[];
-  hiddenTestcase: ITestCase[];
-  starterCode?: mongoose.Types.ObjectId;
-  constraints?: string;
   author: mongoose.Types.ObjectId;
   discussions?: mongoose.Types.ObjectId;
   likeCount: number;
@@ -43,27 +39,6 @@ const ProblemSchema = new Schema<IProblem>(
     tags: {
       type: [String],
       default: [],
-    },
-    testcase: [
-      {
-        input: { type: String, required: true },
-        output: { type: String, required: true },
-      },
-    ],
-    hiddenTestcase: [
-      {
-        input: { type: String, required: true },
-        output: { type: String, required: true },
-      },
-    ],
-    starterCode: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "StarterCode",
-      // required: true,
-    },
-    constraints: {
-      type: String,
-      default: "",
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,

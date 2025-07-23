@@ -12,7 +12,7 @@ export const createSubmission = async (req: Request, res: Response) => {
   try {
     // Will correct this hardocoded value.
     serverCode = fs.readFileSync(
-      `C:/Users/DELL/OneDrive/Desktop/lets-code/server/src/solutions/${function_name.toLowerCase()}/runner.js`,
+      `C:/Users/DELL/OneDrive/Desktop/lets-code/server/src/judge-runners/${function_name}/runner.js`,
       "utf8"
     );
   } catch (error) {
