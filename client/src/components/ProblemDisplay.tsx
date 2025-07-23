@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+
 import {
   FaBrain,
   FaExpand,
@@ -15,6 +16,7 @@ import {
 } from "react-icons/fa";
 import { TbFileDescription } from "react-icons/tb";
 import { MdOutlineReplay10 } from "react-icons/md";
+import MarkdownWrapper from "./MarkDownWrapper";
 
 const ProblemDisplay = () => {
   const { id } = useParams();
@@ -22,6 +24,7 @@ const ProblemDisplay = () => {
 
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [markdown, setMarkdown] = useState<string>("");
 
   const handleClick = (idx: number) => {
     setIndex(index === idx ? null : idx);
@@ -36,6 +39,14 @@ const ProblemDisplay = () => {
         setError(response.data.error || "Failed to fetch problem data.");
       } else {
         setData(response.data.data);
+        
+        // Newly added (Fetching md file from public)
+        const markdownFile = `/problemMd/${response.data.data.description}.md`;
+        const mdRes = await fetch(markdownFile);
+        console.log(mdRes);
+        const mdText = await mdRes.text();
+        console.log(mdText);
+        setMarkdown(mdText);
       }
     } catch (err) {
       console.error(err);
@@ -74,63 +85,9 @@ const ProblemDisplay = () => {
       </div>
 
       {/* Problem Details */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between pb-2">
-          <h1 className="text-2xl font-semibold">{data.title || "Untitled"}</h1>
-        </div>
 
-        {/* Tags/Difficulty Banner */}
-        <div className="flex items-center space-x-3 mt-2 mb-3">
-          <span
-            className={`flex items-center space-x-2 bg-[#2e2e2e] text-sm py-1 px-4 rounded-2xl ${
-              data.difficulty === "Easy"
-                ? "text-green-300"
-                : data.difficulty === "Medium"
-                ? "text-yellow-400"
-                : "text-red-400"
-            }`}
-          >
-            {data.difficulty}
-          </span>
-          <span className="text-yellow-200  flex items-center space-x-2 bg-[#2e2e2e] text-sm py-1 px-4 rounded-2xl">
-            <FaShopware />
-            <span>Companies</span>
-          </span>
-          <span className="text-orange-300  flex items-center space-x-2 bg-[#2e2e2e] text-sm py-1 px-4 rounded-2xl">
-            <FaTags />
-            <span>Topics</span>
-          </span>
-          <span className="text-blue-400  flex items-center space-x-2 bg-[#2e2e2e] text-sm py-1 px-4 rounded-2xl">
-            <FaLightbulb />
-            <span>Hint</span>
-          </span>
-        </div>
-
-        {/* Description */}
-        <p className="text-normal pb-4 text-gray-300">
-          {data.description || "No description provided."}
-        </p>
-
-        {/* Examples */}
-        {data.testcase?.map((test: any, idx: number) => (
-          <div key={test._id} className="mb-4">
-            <h1 className="text-lg font-medium pb-2">Example {idx + 1}:</h1>
-            <div className="border-l-2 border-gray-500 py-1 px-3">
-              <h2>
-                Input: <span>{test.input}</span>
-              </h2>
-              <h2>
-                Output: <span>{test.output}</span>
-              </h2>
-            </div>
-          </div>
-        ))}
-
-        {/* Constraints */}
-        <div className="mt-6">
-          <h1 className="text-lg font-medium pb-2">Constraints:</h1>
-          <li>{data.constraints || "No constraints provided."}</li>
-        </div>
+      <div className="py-4 ">
+        <MarkdownWrapper>{markdown}</MarkdownWrapper>
       </div>
 
       {/* Collapsible Panels */}

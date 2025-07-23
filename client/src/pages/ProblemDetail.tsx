@@ -23,7 +23,6 @@ const ProblemDetail = () => {
   const [error, setError] = useState<null | string>(null);
   const [data, setData] = useState<Problem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showSize, setShowSize] = useState<null | "left" | "right">(null);
 
   const fetchData = async (qId: string) => {
     try {
