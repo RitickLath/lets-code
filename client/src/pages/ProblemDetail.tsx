@@ -1,5 +1,7 @@
+import CodeBox from "@/components/CodeBox";
 import ProblemDisplay from "@/components/ProblemDisplay";
 import axios from "axios";
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -20,45 +22,50 @@ type Problem = {
 
 const ProblemDetail = () => {
   const { id } = useParams();
-  const [error, setError] = useState<null | string>(null);
   const [data, setData] = useState<Problem | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [markdown, setMarkdown] = useState<string>("");
 
-  const fetchData = async (qId: string) => {
+  const fetchData = async (qid: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/problems/id/${qId}`
+        `http://localhost:3001/api/problems/id/${qid}`
       );
       if (!response.data.success) {
-        setError(response.data.error || "Error Occurred While Fetching Data");
+        setError(response.data.error || "Failed to fetch problem data.");
       } else {
         setData(response.data.data);
+
+        // Newly added (Fetching md file from public)
+        const markdownFile = `/problemMd/${response.data.data.description}.md`;
+        const mdRes = await fetch(markdownFile);
+        const mdText = await mdRes.text();
+        setMarkdown(mdText);
       }
-    } catch (e) {
-      setError("Something went wrong while fetching the problem.");
-      console.error(e);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong.");
     }
   };
 
   useEffect(() => {
-    fetchData(id || "");
+    fetchData(id || "687677c979aa0b51254c0ddc");
   }, [id]);
 
-  if (loading) return <div className="p-6 text-white">Loading...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
   if (!data) return null;
 
   return (
-    <div className="flex">
+    <div className=" lg:max-h-[90dvh] overflow-hidden flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
       {/* Question */}
-      <div className="flex-1">
-        <ProblemDisplay />
+      <div className="custom-scrollbar lg:w-1/2 w-full lg:overflow-y-scroll">
+        <ProblemDisplay data={data} markdown={markdown} />
       </div>
 
       {/* Space for Solution */}
-      <div className="lg:flex-1"></div>
+      <div className="lg:w-1/2 w-full">
+        <CodeBox fileName={data.description || ""} />
+      </div>
     </div>
   );
 };
