@@ -74,12 +74,12 @@ const ProblemDisplay = ({
       {/* Collapsible Panels */}
       <div className="mt-8">
         {/* Topics Section */}
-        <div className="border-t-[2px] border-[#3f3e3e] py-2 px-4">
+        <div className="border-t-[1px] border-[#3f3e3e] py-2 px-4">
           <div
             onClick={() => handleClick(1)}
             className="cursor-pointer flex items-center justify-between"
           >
-            <div className="flex items-center space-x-2 text-md">
+            <div className="flex py-1 items-center space-x-2 text-md">
               <FaTags />
               <span>Topics</span>
             </div>
@@ -91,7 +91,7 @@ const ProblemDisplay = ({
                 data?.tags.map((tag: string, i: number) => (
                   <span
                     key={i}
-                    className="bg-[#2e2e2e] text-gray-400 py-1 px-4 rounded-2xl"
+                    className="bg-[#2e2e2e] text-gray-400 px-4 rounded-2xl"
                   >
                     {tag}
                   </span>
@@ -104,12 +104,12 @@ const ProblemDisplay = ({
         </div>
 
         {/* Companies Section */}
-        <div className="border-t-[2px] border-[#3f3e3e] py-2 px-4">
+        <div className="border-t-[1px] border-[#3f3e3e] py-2 px-4">
           <div
             onClick={() => handleClick(2)}
             className="cursor-pointer flex items-center justify-between"
           >
-            <div className="flex items-center space-x-2 text-md">
+            <div className="flex py-1 items-center space-x-2 text-md">
               <FaShopware />
               <span>Companies</span>
             </div>
@@ -135,12 +135,12 @@ const ProblemDisplay = ({
 
         {/* Hint Sections */}
         {data?.hint?.map((hint: string, idx: number) => (
-          <div key={idx} className="border-t-[2px] border-[#3f3e3e] py-2 px-4">
+          <div key={idx} className="border-t-[1px] border-[#3f3e3e] py-2 px-4">
             <div
               onClick={() => handleClick(3 + idx)}
               className="cursor-pointer flex items-center justify-between"
             >
-              <div className="flex items-center space-x-2 text-md">
+              <div className="flex py-1 items-center space-x-2 text-md">
                 <FaLightbulb />
                 <span>Hint {idx + 1}</span>
               </div>

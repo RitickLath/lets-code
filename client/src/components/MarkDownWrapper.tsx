@@ -2,10 +2,7 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 
 const MarkdownWrapper = ({ children }: { children: string }) => {
   return (
-    <div
-      className=""
-      style={{ backgroundColor: "transparent" }}
-    >
+    <div style={{ backgroundColor: "transparent" }}>
       <MarkdownPreview
         className="list-inside [&>ul]:list-disc [&>ol]:list-decimal [&>ol]:-ml-2"
         source={children}
