@@ -1,16 +1,12 @@
 // like count and author
-
 import {
-  FaBrain,
-  FaExpand,
   FaTags,
   FaAngleUp,
   FaAngleDown,
   FaShopware,
   FaLightbulb,
 } from "react-icons/fa";
-import { TbFileDescription } from "react-icons/tb";
-import { MdOutlineReplay10 } from "react-icons/md";
+
 import MarkdownWrapper from "./MarkDownWrapper";
 import { useState } from "react";
 
@@ -44,29 +40,7 @@ const ProblemDisplay = ({
 
   return (
     <div className="w-full">
-      {/* Top Navigation Bar */}
-      <div className="px-3 flex justify-between bg-[#2e2e2e] rounded-xl items-center">
-        <div className="rounded-md flex space-x-4 w-full py-2">
-          <button className="flex hover:text-blue-400 items-center space-x-1 text-sm">
-            <TbFileDescription />
-            <span>Description</span>
-          </button>
-          <button className="flex hover:text-blue-400 items-center space-x-1 text-sm">
-            <MdOutlineReplay10 />
-            <span>Submissions</span>
-          </button>
-          <button className="flex hover:text-blue-400 items-center space-x-1 text-sm">
-            <FaBrain />
-            <span>Ask AI</span>
-          </button>
-        </div>
-        <div className="hidden md:flex">
-          <FaExpand className="hover:text-blue-400 cursor-pointer" />
-        </div>
-      </div>
-
       {/* Problem Details */}
-
       <div className="py-4 ">
         <MarkdownWrapper>{markdown}</MarkdownWrapper>
       </div>

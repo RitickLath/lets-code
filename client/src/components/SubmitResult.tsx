@@ -24,7 +24,7 @@ const SubmitResult = ({
   const isSuccess = status.toLowerCase() === "accepted";
 
   return (
-    <div className="absolute bottom-0 w-full bg-[#1E1E1E] text-white rounded-xl border border-gray-700 p-4 z-50 shadow-lg animate-slide-up">
+    <div className="absolute bottom-0 w-full bg-[#1E1E1E] text-white border border-gray-700 p-4 z-50 shadow-xl animate-slide-up">
       {/* navbar */}
       <div className="flex justify-end">
         <IoClose

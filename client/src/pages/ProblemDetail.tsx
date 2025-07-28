@@ -1,5 +1,8 @@
+import AskAI from "@/components/AskAI";
 import CodeBox from "@/components/CodeBox";
+import ProblemDetailPageNavbar from "@/components/ProblemDetailPageNavbar";
 import ProblemDisplay from "@/components/ProblemDisplay";
+import ShowSubmissions from "@/components/ShowSubmissions";
 import axios from "axios";
 
 import { useEffect, useState } from "react";
@@ -25,6 +28,7 @@ const ProblemDetail = () => {
   const [data, setData] = useState<Problem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [markdown, setMarkdown] = useState<string>("");
+  const [index, setIndex] = useState<1 | 2 | 3>(1);
 
   const fetchData = async (qid: string) => {
     try {
@@ -57,11 +61,20 @@ const ProblemDetail = () => {
 
   return (
     <div className=" lg:max-h-[90dvh] overflow-hidden flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-      {/* Question */}
+      {/* Question / Submissions / Ask AI/ Navbar */}
       <div className="custom-scrollbar lg:w-1/2 w-full lg:overflow-y-scroll">
-        <ProblemDisplay data={data} markdown={markdown} />
-      </div>
+        {/* Navbar */}
+        <ProblemDetailPageNavbar setIndex={setIndex} />
 
+        {/* Description */}
+        {index == 1 && <ProblemDisplay data={data} markdown={markdown} />}
+
+        {/* Submissions */}
+        {index == 2 && <ShowSubmissions />}
+
+        {/* Ask AI */}
+        {index == 3 && <AskAI />}
+      </div>
       {/* Space for Solution */}
       <div className="lg:w-1/2 w-full">
         <CodeBox fileName={data.description || ""} />
