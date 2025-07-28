@@ -1,5 +1,5 @@
 const testcases = {
-  testcase1: { input: [1, 0], expected: 6 },
+  testcase1: { input: [1, 0], expected: 1 },
   testcase2: { input: [2, 5], expected: 7 },
 };
 

@@ -103,7 +103,7 @@ export const createSubmission = async (req: Request, res: Response) => {
     if (status == "Wrong Answer" || status == "Accepted") {
       resultArr = stdout.split("\n");
       const passedArray = resultArr.filter((item: string) =>
-        item.includes("passed")
+        item.includes("Passed")
       );
       const failedArray = resultArr.filter((item: string) =>
         item.includes("Failed")
@@ -111,7 +111,6 @@ export const createSubmission = async (req: Request, res: Response) => {
 
       passed = passedArray.length;
       failed = failedArray.length;
-      console.log(passed + " " + failed);
     }
 
     //Add submission
