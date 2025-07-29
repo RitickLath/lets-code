@@ -75,7 +75,8 @@ const CodeBox = ({ fileName }: { fileName: string }) => {
           withCredentials: true,
         }
       );
-      setSubmitResult(response.data);
+      setSubmitResult(response.data.data);
+      console.log(response.data.data);
       setOpen(true);
     } catch (error: any) {
       const errorMsg = error?.response?.data?.error;

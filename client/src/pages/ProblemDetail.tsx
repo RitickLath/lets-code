@@ -70,7 +70,7 @@ const ProblemDetail = () => {
         {index == 1 && <ProblemDisplay data={data} markdown={markdown} />}
 
         {/* Submissions */}
-        {index == 2 && <ShowSubmissions />}
+        {index == 2 && <ShowSubmissions problemId={id || ""} />}
 
         {/* Ask AI */}
         {index == 3 && <AskAI />}
