@@ -4,10 +4,14 @@ import {
   getAllSubmissions,
   getSubmissionById,
 } from "../controller";
-import {  userAuth } from "../middleware";
+import { userAuth } from "../middleware";
 
 export const submissionRouter = Router();
 
 submissionRouter.post("/", userAuth, createSubmission);
-submissionRouter.get("/", getAllSubmissions);
-submissionRouter.get("/:id", getSubmissionById);
+
+// All Submissions (pagination)
+submissionRouter.get("/", userAuth, getAllSubmissions);
+
+// Submission of particular question
+submissionRouter.get("/:id", userAuth, getSubmissionById);

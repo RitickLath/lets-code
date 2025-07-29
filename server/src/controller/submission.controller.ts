@@ -3,7 +3,6 @@ import fs from "fs";
 import { Request, Response } from "express";
 import path from "path";
 import { Submission } from "../model";
-import { fail } from "assert";
 
 interface CustomRequest extends Request {
   id?: string;
@@ -31,20 +30,27 @@ export const createSubmission = async (req: Request, res: Response) => {
 
   const languageId = languageMap[language];
   if (!languageId) {
-    res.status(400).json({ error: "Unsupported language" });
+    res.status(400).json({
+      success: false,
+      data: null,
+      error: "Unsupported language",
+    });
     return;
   }
 
   let serverCode;
   try {
-    // Will correct this hardocoded value.
     const pathis = path.resolve(
       __dirname,
       `../judge-runners/${function_name}/runner.js`
     );
     serverCode = fs.readFileSync(pathis, "utf8");
   } catch (error) {
-    res.status(400).json({ data: "Function Signature changed by user." });
+    res.status(400).json({
+      success: false,
+      data: null,
+      error: "Function Signature changed by user.",
+    });
     return;
   }
 
@@ -70,7 +76,6 @@ export const createSubmission = async (req: Request, res: Response) => {
       }
     );
 
-    // Find the status of Solution
     const {
       stdout,
       stderr,
@@ -85,7 +90,7 @@ export const createSubmission = async (req: Request, res: Response) => {
     if (judgeStatus?.description === "Time Limit Exceeded") {
       status = "Time Limit Exceeded";
     } else if (compile_output) {
-      status = "Runtime Error"; // or "Compilation Error" if you add it to enum
+      status = "Runtime Error";
     } else if (stderr) {
       status = "Runtime Error";
     } else if (stdout && stdout.includes("Failed")) {
@@ -96,51 +101,115 @@ export const createSubmission = async (req: Request, res: Response) => {
       status = "Runtime Error";
     }
 
-    // total pass and total fails.
-    let resultArr;
-    let failed = 0;
     let passed = 0;
-    if (status == "Wrong Answer" || status == "Accepted") {
-      resultArr = stdout.split("\n");
-      const passedArray = resultArr.filter((item: string) =>
+    let failed = 0;
+    if (status === "Wrong Answer" || status === "Accepted") {
+      const resultArr = stdout.split("\n");
+      passed = resultArr.filter((item: string) =>
         item.includes("Passed")
-      );
-      const failedArray = resultArr.filter((item: string) =>
+      ).length;
+      failed = resultArr.filter((item: string) =>
         item.includes("Failed")
-      );
-
-      passed = passedArray.length;
-      failed = failedArray.length;
+      ).length;
     }
 
-    //Add submission
-    const submission = await Submission.create({
+    await Submission.create({
       user: (req as CustomRequest)?.id || "6876674c1483f2d4377f5f98",
       problemId,
       language,
       status,
-      executionTime: response.data.time,
+      executionTime: time,
       memoryUsed: memory,
     });
 
     res.status(200).json({
-      status,
-      executionTime: time,
-      memoryUsed: memory,
-      passed,
-      failed,
-      stderr,
+      success: true,
+      data: {
+        status,
+        executionTime: time,
+        memoryUsed: memory,
+        passed,
+        failed,
+        stderr,
+      },
+      error: null,
     });
   } catch (e: any) {
     console.error("Judge0 API Error:", e.response?.data || e.message);
-    res.status(500).json({ error: "Judge0 request failed" });
+    res.status(500).json({
+      success: false,
+      data: null,
+      error: "Judge0 request failed",
+    });
   }
 };
 
-export const getAllSubmissions = (req: Request, res: Response) => {
-  res.send("Get all submissions");
+export const getSubmissionById = async (req: Request, res: Response) => {
+  const { id: problemId } = req.params;
+  const page: number = parseInt(req.query.page as string) || 0;
+  const userId = (req as CustomRequest).id;
+
+  if (!problemId) {
+    res.status(400).json({
+      success: false,
+      data: null,
+      error: "ProblemId is required.",
+    });
+    return;
+  }
+
+  try {
+    const submissions = await Submission.find({
+      user: userId,
+      problemId,
+    })
+      .select("language status executionTime memoryUsed createdAt")
+      .sort({ createdAt: -1 })
+      .skip(page * 15)
+      .limit(15);
+
+    res.status(200).json({
+      success: true,
+      data: submissions,
+      error: null,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    res.status(500).json({
+      success: false,
+      data: null,
+      error: "Failed to fetch submissions.",
+    });
+  }
 };
 
-export const getSubmissionById = (req: Request, res: Response) => {
-  res.send("Get submission by ID");
+// get all solution irrespective of problem
+export const getAllSubmissions = async (req: Request, res: Response) => {
+  const page: number = parseInt(req.query.page as string) || 0;
+  const userId = (req as CustomRequest).id;
+
+  try {
+    const submissions = await Submission.find({ user: userId })
+      .select("language status executionTime memoryUsed createdAt problemId")
+      .populate({
+        path: "problemId",
+        select: "title difficulty",
+      })
+      .sort({ createdAt: -1 })
+      .skip(page * 15)
+      .limit(15);
+
+    res.status(200).json({
+      success: true,
+      data: submissions,
+      error: null,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    res.status(500).json({
+      success: false,
+      data: null,
+      error: "Failed to fetch submissions.",
+    });
+  }
 };
