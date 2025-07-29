@@ -32,7 +32,8 @@ const Problems = () => {
     queryKey: ["problemData", page],
     queryFn: () => fetchProblem(page),
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 60 * 1000,
+    gcTime: 1000 * 60 * 60 * 6,
   });
 
   if (isPending) return "Loading...";

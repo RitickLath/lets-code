@@ -1,5 +1,6 @@
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface detailResult {
   _id: string;
@@ -11,31 +12,29 @@ interface detailResult {
 }
 
 const ShowSubmissions = ({ problemId }: { problemId: string }) => {
-  const [details, setDetails] = useState<detailResult[]>([]);
   const [page, setPage] = useState<number>(0);
 
-  const fetchDetails = async (pageNumber: number) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3001/api/submissions/${problemId}?page=${pageNumber}`,
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        setDetails(response.data.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchdata = async () => {
+    const response = await axios.get(
+      `http://localhost:3001/api/submissions/${problemId}?page=${page}`,
+      { withCredentials: true }
+    );
+    console.log(response.data.data);
+    return response.data.data;
   };
 
-  useEffect(() => {
-    fetchDetails(page);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  const {
+    isPending,
+    data,
+  }: { isPending: boolean; data: detailResult[] | undefined } = useQuery({
+    queryKey: ["submissions", problemId, page],
+    queryFn: fetchdata,
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 15, // considered data fresh for 15 minutes
+  });
 
   const handleNext = () => {
-    if (details.length === 15) {
+    if (data?.length === 15) {
       setPage((prev) => prev + 1);
     }
   };
@@ -45,6 +44,9 @@ const ShowSubmissions = ({ problemId }: { problemId: string }) => {
       setPage((prev) => prev - 1);
     }
   };
+  if (isPending) {
+    return <h1>Fetching...</h1>;
+  }
 
   return (
     <div className="custom-scrollbar h-full min-h-[50dvh] px-3 text-sm w-full overflow-x-scroll pt-6">
@@ -56,8 +58,8 @@ const ShowSubmissions = ({ problemId }: { problemId: string }) => {
         <h1>Submitted</h1>
       </div>
 
-      {details.length > 0 ? (
-        details.map((element) => (
+      {data && data?.length > 0 ? (
+        data?.map((element) => (
           <div
             key={element._id}
             className="grid grid-cols-5 items-center py-2 border-b border-gray-700"
@@ -89,7 +91,7 @@ const ShowSubmissions = ({ problemId }: { problemId: string }) => {
       )}
 
       {/* Pagination controls */}
-      {details.length > 0 && (
+      {data && data?.length > 0 && (
         <div className="flex justify-between items-center my-6">
           <button
             onClick={handlePrev}
@@ -101,7 +103,7 @@ const ShowSubmissions = ({ problemId }: { problemId: string }) => {
           <span>Page {page + 1}</span>
           <button
             onClick={handleNext}
-            disabled={details.length < 15}
+            disabled={data.length < 15}
             className="cursor-pointer px-4 py-1 rounded-full bg-[#6166b9] hover:bg-[#3c4069]"
           >
             Next

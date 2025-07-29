@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import SubmitResult from "./SubmitResult";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SubmissionResult {
   status: string;
@@ -23,6 +24,7 @@ interface SubmissionResult {
 
 const CodeBox = ({ fileName }: { fileName: string }) => {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const [starter, setStarter] = useState<string>("");
   const [textData, setTextData] = useState<string>("");
   const [heightFull, setHeightFull] = useState<boolean>(false);
@@ -76,8 +78,15 @@ const CodeBox = ({ fileName }: { fileName: string }) => {
         }
       );
       setSubmitResult(response.data.data);
+
+      // to invalidate the state data of submissions.
+      queryClient.invalidateQueries({
+        queryKey: ["submissions"],
+      });
       console.log(response.data.data);
       setOpen(true);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMsg = error?.response?.data?.error;
 
