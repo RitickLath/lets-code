@@ -45,6 +45,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       `../judge-runners/${function_name}/runner.js`
     );
     serverCode = fs.readFileSync(pathis, "utf8");
+    
   } catch (error) {
     res.status(400).json({
       success: false,
