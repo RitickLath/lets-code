@@ -73,7 +73,7 @@ const ProblemDetail = () => {
         {index == 2 && <ShowSubmissions problemId={id || ""} />}
 
         {/* Ask AI */}
-        {index == 3 && <AskAI />}
+        {index == 3 && <AskAI title={data.title} markdown={markdown} />}
       </div>
       {/* Space for Solution */}
       <div className="lg:w-1/2 w-full">
