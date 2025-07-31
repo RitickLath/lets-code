@@ -5,11 +5,9 @@ import Register from "./pages/Register";
 import ProblemDetail from "./pages/ProblemDetail";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import Submissions from "./pages/Submissions";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./context/AuthProvider";
-import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NonProtectedRoute from "./components/NonProtectedRoute";
 import { lazy, Suspense } from "react";
@@ -44,8 +42,6 @@ const App = () => {
 
               {/* Only logged in user */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/submissions" element={<Submissions />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>
 

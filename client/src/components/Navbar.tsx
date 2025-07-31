@@ -29,21 +29,12 @@ const Navbar = () => {
           Let's Code
         </h1>
         <div className="flex space-x-8">
-          <button className="cursor-pointer">About</button>
           <button
             onClick={() => navigate("/problems")}
             className="cursor-pointer"
           >
             Problems
           </button>
-          {isAuthenticated && (
-            <button
-              onClick={() => navigate("/submissions")}
-              className="cursor-pointer"
-            >
-              Submissions
-            </button>
-          )}
           {isAuthenticated && (
             <button
               onClick={() => navigate("/profile")}
@@ -81,7 +72,12 @@ const Navbar = () => {
 
       {/* Small Screen */}
       <div className="flex justify-between items-center py-3 lg:hidden">
-        <h1 className="text-[#ae6162] text-xl font-semibold">Let's Code</h1>
+        <h1
+          onClick={() => navigate("/")}
+          className="cursor-pointer text-[#ae6162] text-xl font-semibold"
+        >
+          Let's Code
+        </h1>
         <div>
           <Sheet>
             <SheetTrigger>
@@ -112,11 +108,6 @@ const Navbar = () => {
                   >
                     Problem
                   </button>
-                  {isAuthenticated && (
-                    <button className="text-left cursor-pointer">
-                      Submissions
-                    </button>
-                  )}
                   {isAuthenticated && (
                     <button
                       onClick={() => navigate("/profile")}

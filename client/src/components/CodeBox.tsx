@@ -69,7 +69,7 @@ const CodeBox = ({ fileName }: { fileName: string }) => {
         "http://localhost:3001/api/submissions",
         {
           source_code: textData,
-          function_name: fileName.replace("-", ""),
+          function_name: fileName.replaceAll("-", ""),
           problemId: id,
           language: "Javascript",
         },
