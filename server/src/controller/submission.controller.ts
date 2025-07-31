@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "fs";
 import { Request, Response } from "express";
 import path from "path";
-import { Submission } from "../model";
+import { Submission, User } from "../model";
 
 interface CustomRequest extends Request {
   id?: string;
@@ -22,13 +22,16 @@ export const createSubmission = async (req: Request, res: Response) => {
     language: "Java" | "Javascript" | "Python";
   } = req.body;
 
+  // Map programming languages to Judge0 language IDs (for future use)
   const languageMap: Record<string, number> = {
     Java: 62,
     Javascript: 63,
     Python: 71,
   };
-
+  // Get the corresponding language ID
   const languageId = languageMap[language];
+
+  // Return error if language is not supported
   if (!languageId) {
     res.status(400).json({
       success: false,
@@ -38,6 +41,7 @@ export const createSubmission = async (req: Request, res: Response) => {
     return;
   }
 
+  // Load server-side runner/test code for the specific function
   let serverCode;
   try {
     const pathis = path.resolve(
@@ -45,8 +49,8 @@ export const createSubmission = async (req: Request, res: Response) => {
       `../judge-runners/${function_name}/runner.js`
     );
     serverCode = fs.readFileSync(pathis, "utf8");
-    
   } catch (error) {
+    // If file is not found or path is incorrect, likely due to function signature change
     res.status(400).json({
       success: false,
       data: null,
@@ -55,6 +59,7 @@ export const createSubmission = async (req: Request, res: Response) => {
     return;
   }
 
+  // Combine user code with the server-side test code
   const sendCode = `
   ${source_code}
 
@@ -62,6 +67,7 @@ export const createSubmission = async (req: Request, res: Response) => {
   `;
 
   try {
+    // Submit code to Judge0 API for execution
     const response = await axios.post(
       `https://${process.env.RAPID_API_HOST}/submissions?base64_encoded=false&wait=true`,
       {
@@ -77,6 +83,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       }
     );
 
+    // Extract relevant execution results from Judge0 response
     const {
       stdout,
       stderr,
@@ -86,6 +93,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       status: judgeStatus,
     } = response.data;
 
+    // Determine final status based on Judge0 response
     let status;
 
     if (judgeStatus?.description === "Time Limit Exceeded") {
@@ -102,6 +110,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       status = "Runtime Error";
     }
 
+    // Determine final status based on Judge0 response
     let passed = 0;
     let failed = 0;
     if (status === "Wrong Answer" || status === "Accepted") {
@@ -114,6 +123,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       ).length;
     }
 
+    // Save the submission record in the database
     await Submission.create({
       user: (req as CustomRequest)?.id || "6876674c1483f2d4377f5f98",
       problemId,
@@ -123,6 +133,35 @@ export const createSubmission = async (req: Request, res: Response) => {
       memoryUsed: memory,
     });
 
+    // If all test cases passed and not already solved by the user, update their solved count
+    if (failed == 0 && passed > 0) {
+      // check if the question is already solved by user earlier.
+      const alreadySolved = await Submission.findOne({
+        user: (req as CustomRequest).id,
+        problemId,
+        status: "Accepted",
+      });
+
+      if (!alreadySolved) {
+        // If not solved before, increment the user's `problemSolved` count
+        const user = await User.findById((req as CustomRequest).id).select(
+          "problemSolved"
+        );
+        if (!user) {
+          res.status(404).json({
+            success: false,
+            data: null,
+            error: "User not found",
+          });
+          return;
+        }
+
+        user.problemSolved = (user?.problemSolved || 0) + 1;
+
+        await user?.save();
+      }
+    }
+    // Send final response back to the client
     res.status(200).json({
       success: true,
       data: {
@@ -136,6 +175,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       error: null,
     });
   } catch (e: any) {
+    // Log and return API failure
     console.error("Judge0 API Error:", e.response?.data || e.message);
     res.status(500).json({
       success: false,

@@ -9,6 +9,9 @@ export interface IUser extends Document {
   isPremium: boolean;
   createdAt: Date;
   updatedAt: Date;
+  likedProblem: mongoose.Schema.Types.ObjectId[];
+  SavedProblem: mongoose.Schema.Types.ObjectId[];
+  problemSolved: number;
   isPasswordCorrect(password: string): Promise<boolean>;
 }
 
@@ -46,6 +49,18 @@ const UserSchema: Schema = new mongoose.Schema<IUser>(
       type: String,
       enum: ["Admin", "User"],
       default: "User",
+    },
+    likedProblem: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Problem",
+    },
+    SavedProblem: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Problem",
+    },
+    problemSolved: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
