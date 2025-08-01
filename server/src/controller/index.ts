@@ -11,6 +11,9 @@ export {
   difficultyProblem,
   tagsProblem,
   searchProblem,
+  CreateStarterCode,
+  saveProblem,
+  likeProblem,
 } from "./problem.controller";
 
 export {

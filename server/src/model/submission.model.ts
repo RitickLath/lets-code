@@ -12,12 +12,12 @@ export interface ISubmission extends Document {
 const SubmissionSchema = new Schema<ISubmission>(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
     },
     problemId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "Problem",
       required: true,
     },

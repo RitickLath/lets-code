@@ -9,8 +9,8 @@ export interface IUser extends Document {
   isPremium: boolean;
   createdAt: Date;
   updatedAt: Date;
-  likedProblem: mongoose.Schema.Types.ObjectId[];
-  SavedProblem: mongoose.Schema.Types.ObjectId[];
+  likedProblem: mongoose.Types.ObjectId[];
+  SavedProblem: mongoose.Types.ObjectId[];
   problemSolved: number;
   isPasswordCorrect(password: string): Promise<boolean>;
 }
