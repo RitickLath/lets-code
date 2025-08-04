@@ -8,14 +8,25 @@ import {
 } from "@/components/ui/sheet";
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
+import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    navigate("/");
+  const handleLogout = async () => {
+    const response = await axios.post(
+      "http://localhost:3001/api/auth/logout",
+      {},
+      { withCredentials: true }
+    );
+    console.log(response.data);
+    if (response.data.success) {
+      setIsAuthenticated(false);
+      navigate("/");
+    } else {
+      alert("User not logged out.");
+    }
   };
 
   return (

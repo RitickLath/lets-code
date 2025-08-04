@@ -206,3 +206,16 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(401).json({ success: false, error: "Invalid or expired token" });
   }
 };
+
+export const logOut = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("token");
+    res
+      .status(201)
+      .json({ success: true, message: "User Logged out.", error: null });
+  } catch (error: any) {
+    res
+      .status(201)
+      .json({ success: true, message: "User unable to logged out.", error });
+  }
+};

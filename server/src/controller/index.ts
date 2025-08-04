@@ -1,4 +1,4 @@
-export { registerUser, loginUser, getMe } from "./auth.controller";
+export { registerUser, loginUser, getMe, logOut } from "./auth.controller";
 
 export {
   getAllProblems,

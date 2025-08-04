@@ -4,7 +4,6 @@ import ProblemDetailPageNavbar from "@/components/ProblemDetailPageNavbar";
 import ProblemDisplay from "@/components/ProblemDisplay";
 import ShowSubmissions from "@/components/ShowSubmissions";
 import axios from "axios";
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -33,7 +32,8 @@ const ProblemDetail = () => {
   const fetchData = async (qid: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/problems/id/${qid}`
+        `http://localhost:3001/api/problems/id/${qid}`,
+        { withCredentials: true }
       );
       if (!response.data.success) {
         setError(response.data.error || "Failed to fetch problem data.");

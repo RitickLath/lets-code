@@ -49,6 +49,7 @@ export const getProblemById = async (req: Request, res: Response) => {
   // Step-1: Extract problem ID from route parameters
   const { id: problemid } = req.params;
 
+  console.log(req.cookies);
   // Step-2: Return error if ID is not provided
   if (!problemid) {
     res.status(400).json({
