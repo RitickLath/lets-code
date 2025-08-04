@@ -631,6 +631,95 @@ export const likeProblem = async (req: Request, res: Response) => {
         ? "Problem removed from liked list"
         : "Problem added to liked list",
       error: null,
+      data: likedAlreadySaved ? true : false,
     });
   } catch (error: any) {}
+};
+
+export const getLikeSave = async (req: Request, res: Response) => {
+  const { problemId } = req.params;
+
+  if (!problemId) {
+    res.status(401).json({
+      success: false,
+      message: "Problem ID is not provided",
+      error: "Problem Id is required.",
+    });
+    return;
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(problemId)) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid Problem ID format",
+      error: "Problem ID is not valid.",
+    });
+    return;
+  }
+
+  const questionId = new mongoose.Types.ObjectId(problemId);
+
+  try {
+    const problem = await Problem.findById(questionId);
+
+    if (!problem) {
+      res.status(404).json({
+        success: false,
+        message: "Problem not found",
+        error: "No such problem exists.",
+      });
+      return;
+    }
+
+    const likeCount = problem.likeCount;
+    const dislikeCount = problem.dislikeCount;
+
+    const user = await User.findById((req as CustomRequest).id);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+        error: "No such user exists.",
+      });
+      return;
+    }
+    let liked = false;
+    let saved = false;
+    const likedAlready = user.likedProblem.some(
+      (pId) => pId.toString() === questionId.toString()
+    );
+
+    if (likedAlready) {
+      liked = true;
+    }
+
+    const SavedAlready = user.SavedProblem.some(
+      (pId) => pId.toString() === questionId.toString()
+    );
+
+    if (SavedAlready) {
+      saved = true;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Like and Save data sent.",
+      error: null,
+      data: {
+        saved,
+        liked,
+        dislikeCount,
+        likeCount,
+      },
+    });
+  } catch (error: any) {
+    console.log("Internal Server Error");
+    res.status(500).json({
+      success: false,
+      message: "Error Occured",
+      error,
+      data: null,
+    });
+  }
 };

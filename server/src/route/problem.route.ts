@@ -13,6 +13,7 @@ import {
   tagsProblem,
   saveProblem,
   likeProblem,
+  getLikeSave,
 } from "../controller";
 import { adminAuth, userAuth } from "../middleware";
 
@@ -33,6 +34,8 @@ problemRouter.get("/tags", tagsProblem);
 // // // // // // // // // // // // // // // // // // // // //
 
 // User-only Routes
+
+problemRouter.get("/getStats/:problemId", userAuth, getLikeSave);
 
 // save/unsave question
 problemRouter.post("/save/:problemId", userAuth, saveProblem);

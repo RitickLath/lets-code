@@ -58,13 +58,19 @@ const ProblemDetail = () => {
 
   if (error) return <div className="p-6 text-red-500">{error}</div>;
   if (!data) return null;
+  // console.log(data);
 
   return (
     <div className=" lg:max-h-[90dvh] overflow-hidden flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
       {/* Question / Submissions / Ask AI/ Navbar */}
       <div className="custom-scrollbar lg:w-1/2 w-full lg:overflow-y-scroll">
         {/* Navbar */}
-        <ProblemDetailPageNavbar setIndex={setIndex} />
+        <ProblemDetailPageNavbar
+          setIndex={setIndex}
+          dislikeCount={data.dislikeCount}
+          likeCount={data.likeCount}
+          problemId={id}
+        />
 
         {/* Description */}
         {index == 1 && <ProblemDisplay data={data} markdown={markdown} />}

@@ -14,6 +14,7 @@ export {
   CreateStarterCode,
   saveProblem,
   likeProblem,
+  getLikeSave,
 } from "./problem.controller";
 
 export {
