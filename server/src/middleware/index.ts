@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../model";
 import mongoose from "mongoose";
 
-interface CustomRequest extends Request {
+export interface CustomRequest extends Request {
   id?: string;
   role?: "User" | "Admin";
 }

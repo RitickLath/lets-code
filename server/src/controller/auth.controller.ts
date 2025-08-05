@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { signupSchema } from "../utils/zodSchema";
-import { User } from "../model";
+import { Submission, User } from "../model";
 import z from "zod";
 import jwt from "jsonwebtoken";
+import { CustomRequest } from "../middleware";
+import mongoose from "mongoose";
 
 // Register a new user
 export const registerUser = async (req: Request, res: Response) => {
@@ -218,4 +220,74 @@ export const logOut = async (req: Request, res: Response) => {
       .status(201)
       .json({ success: true, message: "User unable to logged out.", error });
   }
+};
+
+export const profile = async (req: Request, res: Response) => {
+  const id = (req as CustomRequest).id;
+
+  console.log(id);
+  if (!mongoose.Types.ObjectId.isValid(id || "")) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid user ID",
+      error: "User ID format is incorrect",
+      data: null,
+    });
+    return;
+  }
+
+  const userId = new mongoose.Types.ObjectId(id);
+
+  try {
+    const user = await User.findById(userId)
+      .populate({
+        path: "SavedProblem",
+        select: "title difficulty",
+      })
+      .populate({
+        path: "likedProblem",
+        select: "title difficulty",
+      })
+      .select("-password");
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User profile not found.",
+        error: "User does not exist.",
+        data: null,
+      });
+      return;
+    }
+
+    // Get the total number of submissions for the user
+    const totalSubmissions = await Submission.countDocuments({ user: userId });
+
+    //
+    const submissions = await Submission.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate({
+        path: "problemId",
+        select: "title difficulty",
+      });
+
+    const responseData = {
+      email: user.email,
+      username: user.username,
+      likedProblem: user.likedProblem,
+      SavedProblem: user.SavedProblem,
+      createdAt: user.createdAt,
+      problemSolved: user.problemSolved,
+      recentSubmissions: submissions,
+      totalSubmissions,
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "User profile fetched successfully.",
+      error: null,
+      data: responseData,
+    });
+  } catch (error: any) {}
 };
