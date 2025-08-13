@@ -32,10 +32,9 @@ const ProblemDetail = () => {
 
   const fetchData = async (qid: string) => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/api/problems/id/${qid}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${apiUrl}/api/problems/id/${qid}`, {
+        withCredentials: true,
+      });
       if (!response.data.success) {
         setError(response.data.error || "Failed to fetch problem data.");
       } else {
@@ -68,9 +67,9 @@ const ProblemDetail = () => {
         {/* Navbar */}
         <ProblemDetailPageNavbar
           setIndex={setIndex}
-          dislikeCount={data.dislikeCount}
-          likeCount={data.likeCount}
-          problemId={id}
+          // dislikeCount={data.dislikeCount}
+          // likeCount={data.likeCount}
+          problemId={id || ""}
         />
 
         {/* Description */}
