@@ -6,7 +6,6 @@ import ShowSubmissions from "@/components/ShowSubmissions";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 type Problem = {
   _id: string;
@@ -32,7 +31,7 @@ const ProblemDetail = () => {
 
   const fetchData = async (qid: string) => {
     try {
-      const response = await axios.get(`${apiUrl}/api/problems/id/${qid}`, {
+      const response = await axios.get(`/api/problems/id/${qid}`, {
         withCredentials: true,
       });
       if (!response.data.success) {

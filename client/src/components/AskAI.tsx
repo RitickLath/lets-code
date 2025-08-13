@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import { Typewriter } from "react-simple-typewriter";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AskAI = ({ title, markdown }: { title: string; markdown: string }) => {
   const [currentText, setCurrentText] = useState<string[]>([
@@ -21,7 +20,7 @@ const AskAI = ({ title, markdown }: { title: string; markdown: string }) => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/api/ai`,
+        `/api/ai`,
         {
           question: questionReference,
           userDoubt: inputText,

@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface detailResult {
   _id: string;
@@ -17,7 +16,7 @@ const ShowSubmissions = ({ problemId }: { problemId: string }) => {
 
   const fetchdata = async () => {
     const response = await axios.get(
-      `${apiUrl}/api/submissions/${problemId}?page=${page}`,
+      `/api/submissions/${problemId}?page=${page}`,
       { withCredentials: true }
     );
     console.log(response.data.data);

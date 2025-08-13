@@ -12,7 +12,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import SubmitResult from "./SubmitResult";
 import { useQueryClient } from "@tanstack/react-query";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface SubmissionResult {
   status: string;
@@ -67,7 +66,7 @@ const CodeBox = ({ fileName }: { fileName: string }) => {
     setSubmitResult(null);
     try {
       const response = await axios.post(
-        `${apiUrl}/api/submissions`,
+        `/api/submissions`,
         {
           source_code: textData,
           function_name: fileName.replaceAll("-", ""),

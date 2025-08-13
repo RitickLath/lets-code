@@ -1,5 +1,3 @@
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-
 import {
   FaBrain,
   FaExpand,
@@ -28,10 +26,9 @@ const ProblemDetailPageNavbar = ({
 
   const getStats = async () => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/api/problems/getStats/${problemId}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/problems/getStats/${problemId}`, {
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         const { likeCount, dislikeCount, liked, saved } = response.data.data;
@@ -56,7 +53,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `${apiUrl}/api/problems/save/${problemId}`,
+        `/api/problems/save/${problemId}`,
         {},
         { withCredentials: true }
       );
@@ -74,7 +71,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `${apiUrl}/api/problems/like/${problemId}`,
+        `/api/problems/like/${problemId}`,
         {},
         { withCredentials: true }
       );
@@ -94,7 +91,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `${apiUrl}/api/problems/dislike/${problemId}`,
+        `/api/problems/dislike/${problemId}`,
         {},
         { withCredentials: true }
       );

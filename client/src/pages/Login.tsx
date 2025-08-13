@@ -2,7 +2,6 @@ import { AuthContext } from "@/context/auth-context";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +23,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${apiUrl}/api/auth/login`, formData, {
+      const response = await axios.post(`/api/auth/login`, formData, {
         withCredentials: true,
       });
 
