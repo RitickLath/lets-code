@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { LuArrowDownUp } from "react-icons/lu";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const levels: Array<"Easy" | "Medium" | "Hard"> = ["Easy", "Medium", "Hard"];
 
@@ -30,7 +31,7 @@ const DifficultyFilter = ({
     setIsDropdownOpen(false);
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/problems/difficulty?difficulty=${difficulty.toLowerCase()}`
+        `${apiUrl}/api/problems/difficulty?difficulty=${difficulty.toLowerCase()}`
       );
       if (!response.data.success) {
         console.log("Error Occured" + response.data.error);

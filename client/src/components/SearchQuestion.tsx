@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { FaSearch } from "react-icons/fa";
 import DifficultyFilter from "./DifficultyFilter";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const SearchQuestion = ({
   setQuestionData,
@@ -21,7 +22,7 @@ const SearchQuestion = ({
     const timerId = setTimeout(async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/problems/search?keyword=${keyword}`
+          `${apiUrl}/api/problems/search?keyword=${keyword}`
         );
         if (!response.data.success) {
           console.log("Error Occured" + response.data.error);

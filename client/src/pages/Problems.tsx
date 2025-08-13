@@ -4,6 +4,7 @@ import { useState } from "react";
 import ShowTopic from "@/components/ShowTopic";
 import ListQuestions from "@/components/ListQuestions";
 import SearchQuestion from "@/components/SearchQuestion";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Problems = () => {
   const [page, setPage] = useState<number>(0);
@@ -12,9 +13,7 @@ const Problems = () => {
 
   const fetchProblem = async (page: number) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3001/api/problems?page=${page}`
-      );
+      const response = await axios.get(`${apiUrl}/api/problems?page=${page}`);
 
       if (response.data.success) {
         return response.data.data;

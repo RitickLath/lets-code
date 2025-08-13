@@ -1,3 +1,5 @@
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 import {
   FaBrain,
   FaExpand,
@@ -27,7 +29,7 @@ const ProblemDetailPageNavbar = ({
   const getStats = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/problems/getStats/${problemId}`,
+        `${apiUrl}/api/problems/getStats/${problemId}`,
         { withCredentials: true }
       );
 
@@ -54,7 +56,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/api/problems/save/${problemId}`,
+        `${apiUrl}/api/problems/save/${problemId}`,
         {},
         { withCredentials: true }
       );
@@ -72,7 +74,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/api/problems/like/${problemId}`,
+        `${apiUrl}/api/problems/like/${problemId}`,
         {},
         { withCredentials: true }
       );
@@ -92,7 +94,7 @@ const ProblemDetailPageNavbar = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/api/problems/dislike/${problemId}`,
+        `${apiUrl}/api/problems/dislike/${problemId}`,
         {},
         { withCredentials: true }
       );

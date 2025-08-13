@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface Problem {
   _id: string;
@@ -39,12 +40,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:3001/api/auth/profile",
-          {
-            withCredentials: true,
-          }
-        );
+        const { data } = await axios.get(`${apiUrl}/api/auth/profile`, {
+          withCredentials: true,
+        });
         setProfile(data.data);
       } catch (err) {
         console.error("Failed to fetch profile", err);

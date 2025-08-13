@@ -9,6 +9,7 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     const response = await axios.post(
-      "http://localhost:3001/api/auth/logout",
+      `${apiUrl}/api/auth/logout`,
       {},
       { withCredentials: true }
     );

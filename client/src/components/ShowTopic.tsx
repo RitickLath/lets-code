@@ -2,6 +2,7 @@ import { QuestionTags } from "@/constants/tags";
 import axios from "axios";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { FaAngleDoubleUp, FaAngleDoubleDown } from "react-icons/fa";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ShowTopic = ({
   setQuestionData,
@@ -23,7 +24,7 @@ const ShowTopic = ({
 
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/problems/tags?tag=${tag}`
+        `${apiUrl}/api/problems/tags?tag=${tag}`
       );
       if (!response.data.success) {
         console.log("Error Occured" + response.data.error);

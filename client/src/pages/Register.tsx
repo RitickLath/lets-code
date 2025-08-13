@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "@/context/auth-context";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -31,14 +32,11 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/auth/register",
-        {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      const response = await axios.post(`${apiUrl}/api/auth/register`, {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (response.data.success) {
         setIsAuthenticated(true);
